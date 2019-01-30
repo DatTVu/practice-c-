@@ -16,13 +16,13 @@ class BSTree
 	//insert value into a tree
 	
 	//get count of values stored
-	int get_node_count();
+	int get_node_count(TreeNode* node);
 	//print the values in the tree, from min to max
 	void print_values();
 	//delete_tree
 	void delete_tree();
 	//return true if give value exists in the tree
-	bool is_in_tree();
+	bool is_in_tree(TreeNode* node);
 	//return the height in nodes
 	int get_height();
 	//return min value stored in the tree
