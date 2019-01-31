@@ -10,35 +10,38 @@ struct TreeNode {
 
 class BSTree
 {	//constructor
-	BSTree(); 
+	BSTree();  //done
 	//destructor
-	~BSTree();
-	//insert value into a tree
-	
-	//get count of values stored
-	int get_node_count(TreeNode* node);
+	~BSTree();	
+	//return number of child of a node
+	int get_child_count(TreeNode* node); //done
 	//print the values in the tree, from min to max
 	void print_values();
 	//delete_tree
 	void delete_tree();
 	//return true if give value exists in the tree
-	bool is_in_tree(TreeNode* node);
+	bool is_value_in_tree(TreeNode* node, int value); //done
 	//return the height in nodes
-	int get_height();
+	
 	//return min value stored in the tree
-	int get_min();
+	int get_min_value_of_tree(); //done
+	//return min node in a branch 
+	TreeNode* get_min_node_of_branch(TreeNode* node); //done
 	//return max value stored in the tree
-	int get_max();
+	int get_max_value_of_tree(); //done
+	//return max node in a branch
+	TreeNode* get_max_node_of_branch(TreeNode* node); //done
 	//check if a tree is a valid binary tree
-	bool is_binary_search_tree();
-	//delete value
-	void delete_node();
+	bool is_binary_search_tree();	
 	//returns next highest value in the tree after given value, -1 if none
-	int get_successor();	
-
+	int get_successor();
+	//delete a value
+	TreeNode* delete_node(TreeNode*node, int value); //done
 private:
 	TreeNode *root;
 };
 
+int get_height(TreeNode* node);
 TreeNode* insert(TreeNode*node, int nodeValue);
+
 
