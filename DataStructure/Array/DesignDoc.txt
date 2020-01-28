@@ -1,0 +1,26 @@
+Dynamic Array Design:
+Data member:
+m_size: number of items currently in array
+m_capacity: number of items that can be hold
+m_data: hold the data of type int-> is a pointer
+
+Function member:
++default constructor
++parametrized constructor: 
+ @capacity: number of items that can be hold
+ @this constructor take capacity and dynamically allocated capacity for the dynamic array
++copy constructor:
+ @dynamic_array
+ take a dynamic array, create another dynamic array whom size is double the old array, copy data of old array to new array use memcpy
++is_empty(): if m_size == 0, return true else return false;
++item_at(index) - returns item at given index, throw exception if index out of bounds
++pushback(item): check if size < capacity, if true put item at the latest available space in the array, else use copy constructor to create new array, then put item at the latest available space
++insert(item, index): check if size+1 < capacity, if true, move all the element to the right by 1, then put the element at index position, else use copy constructor and do item
++prepend(item): use insert at index 0
++pop(): delete the item at last position
++delete(index): delete item at index, shifting all trailing elements left
++remove(item): traverse for 
++find(item) - looks for value and returns first index with that value, -1 if not found
++resize(new_capacity) // private function
+when you reach capacity, resize to double the size
+when popping an item, if size is 1/4 of capacity, resize to half
