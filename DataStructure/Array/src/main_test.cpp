@@ -1,0 +1,80 @@
+#include <iostream>
+#include "DynamicArray.h"
+
+int main()
+{
+    std::cout << "Hello World!\n";
+    DynamicArray testarray = DynamicArray();  
+    std::cout << testarray.is_empty() << std::endl;
+    testarray.pushback(1);
+    std::cout << testarray.is_empty() << std::endl;
+    testarray.pushback(2);
+    testarray.pushback(3);
+    testarray.pushback(4);
+    testarray.pushback(5);
+    testarray.pushback(6);
+    testarray.pushback(7);
+    testarray.pushback(8);
+    testarray.pushback(9);
+    testarray.pushback(10);
+    testarray.pushback(11);
+    testarray.pushback(12);
+    testarray.pushback(13);
+    testarray.pushback(14);
+    testarray.pushback(15);
+    testarray.pushback(16);
+    testarray.pushback(17);
+    testarray.display();
+    testarray.popback();
+    testarray.display();
+    testarray.popback();
+    testarray.display();
+    testarray.popback();
+    testarray.display();
+    testarray.popback();
+    testarray.display();
+    testarray.popback();
+    testarray.display();
+    testarray.popback();
+    testarray.display();
+    testarray.delete_item(5);
+    testarray.display();
+    testarray.insert(20, 6);
+    testarray.display();
+    testarray.insert(101, 6);
+    testarray.display();
+    testarray.insert(23, 6);    
+    testarray.display();
+    testarray.insert(96, 6);
+    testarray.display();
+    testarray.insert(96, -1);
+    testarray.display();
+    testarray.insert(20, 16);
+    testarray.display();
+    testarray.delete_item(0);
+    testarray.display();
+    testarray.delete_item(-1);
+    testarray.display();
+    testarray.prepend(18);
+    testarray.display();
+    testarray.prepend(19);
+    testarray.display();
+    testarray.prepend(20);
+    testarray.display();
+    testarray.prepend(21);
+    testarray.display();
+    testarray.prepend(22);
+    testarray.display();
+    testarray.prepend(20);
+    testarray.display();
+    testarray.prepend(24);
+    testarray.display();
+    testarray.prepend(20);
+    testarray.display();
+    testarray.find(20);
+    testarray.display();
+    testarray.remove_item(20);
+    testarray.display();
+    system("pause");
+}
+
