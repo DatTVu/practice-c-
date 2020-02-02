@@ -1,0 +1,50 @@
+Constructor
+    cannot be inheritated
+    build object from dust
+    initialization list: doesn't use copy operators, faster, should be used alwasy
+    initialization order: base class-> data member following the order member
+    should be initialized
+    "Named Constructor Idiom": 
+    class Point{
+        public:
+        static Point rectangular(float x, float y);
+        static Point polar(float radius, float angle);
+        private:
+            Point(float x, float y);
+            float m_x, m_y;
+
+    };
+
+    Point::Point(float x, float y) : m_x(x), m_y(y);
+    Point Point::rectangular(float x, float y){
+        return Point(x, y);
+    }
+    Point Point::polar(float radius, float angle){
+        return Point(radius*std::cos(angle), radius*std::sin(angle));
+    }
+    copy Constructor
+
+Destructor
+    release any resources allocated by the object
+    first constructed, last destructed
+    virtual destructor should be used when someone will derive from your class
+    and if some one will say new Derived where Derived is derived from your class
+    and if some one will say delete p, where object is of typed Derived but
+    the pointer p's type is your class
+
+Operator Overloading
+    class Fred{
+        public:
+        //...
+    };
+
+    Fred opertor+(const Fred&x, const Fred&y);
+    Fred opertor*(const Fred&x, const Fred&y);
+    can't overload . :? sizeof :: .*    
+
+Virtual function
+
+java native interface
+scanf
+fscanf
+OPENGL

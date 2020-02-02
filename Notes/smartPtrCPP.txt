@@ -1,0 +1,30 @@
+Smart Pointer
+    Unique pointer:
+    unique_ptr<Song> m_pointerSong = make_unique<Song>("Wiz Khalifa", "Black&Yellow");
+    vector<unique_ptr<Song>> songList_;
+    songList.push_back(make_unique<Song>("Wiz Khalifa", "Black&Yellow"));
+
+
+Shared Pointer:
+    shared_ptr<Song> sp2 = make_shared<Song>("Hoang Thuy Linh", "De Mi Noi Cho Ma Nghe");
+    auto sp3(sp2); //increments ref count.
+    auto sp4 = sp2; //increments ref count
+    sp1.swap(sp2); // swap ref count and pointers
+
+    Pass shared pointer to a function:
+    pass by value will increase ref count. Because pass by value invokes copy constructor,
+    increment the reference count, makes the callee an owner. Use this option when there is
+    implied or explicit code contract between the caller and callee
+
+    Pass by const reference. ref count isn't incremented, and the callee can access the
+    pointer as long as the caller doesn't go out of scope. When caller doesn't know about
+    callee or want to avoid copy operations
+
+    Pass the underlying pointer or a reference to the underlying object. use when caller 
+    retains ownership of the shared_ptr lifetime. 
+Weak Pointer:
+    avoid shared pointer at all cost. if not avoid cyclic reference at all cost. if not 
+    possible, for one object used weak pointer to give a weak ownership to the other
+    shared_ptr
+    weak pointer doesn't increase ref count. but it gives you the access or observe right
+    to the shared ptr as long as it is still alive.

@@ -1,0 +1,9 @@
+App specific storage: internal storage. store sensitive information that other apps 
+shouldn't access. When uninstalled, files saved in app-specific storage are removed
+
+
+Shared storage: store files that your app intends to share with other apps
+
+Preferences: store private, primitive data in key-value pairs
+
+Databases: structured data in private database using Room library

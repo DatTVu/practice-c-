@@ -1,0 +1,13 @@
+ArDemo:
++generate bff, configure bff to point to correct include folder of the libs, clone the configure for different architectures
++create entrypoint, override from Main.cpp
++define its own dynamic memory allocation, why is that because of memory defragmentation
++write simple shader code to test the program works, ok so we haven't add filesystem=> just hard code it with string. yes we can store shader as string
++create buffer for vertex, indices => draw inside and update
++add correct j2a which copy the necessary resources form java to android
++use android manifest to add camera and internet permission to the application
++add filesystem to load shader from a text file
++use arcore sdk to create a ar_session
++generate texture, bind texture to type of GL_TEXTURE_EXTERNAL_OES, set its filter
++fill the texture data by using ar_session
++add update the texture by using ar_frame

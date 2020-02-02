@@ -1,0 +1,49 @@
+Android Review
++ Application: base class, contains all other components such as activities and services. This is the first class instantiated. 
++ Each app runs in its own virtual machine
++ Can share Linux user ID to access each other's data
++ 4 components: Activities, Services, Broadcast receivers, Content Providers
+
+Activities: Entry point for interacting with user. Single screen with user interface.
+Independent of other activities
+
+Services: entry point for keeping an app running in the background. Started services and bound
+services. Started service is kept alive until its work is done. Bound service is bounded to 
+another processes, so there is a dependency
+
+Broadcast receivers: enable the system to deliver events to the app outside of regular flow.
+For example: send notifications to apps that aren't currently running. Can schedule a JobService
+to perform some work based on the event with JobScheduler
+
+Content provider: manages a shared set of app data. Through content provider, other apps can
+query or modify data.
+
+Intent: an asynchronous message sent between components to activate them. Intent binds
+components at run time. 
+Explicit Intent: activate specific component
+Implicit Intent: activate specific type of component
+Activities and services, intent specifies action to perform, i.s to view or to send something
+For broastcast receiver: intent define the announcement being Broadcast
+Content provider is activated by content resolver
+
+Start an intent:
+1. Pass Intent to startActivity() or startActivityForResult()
+2. Pass Intent to startService and bindService
+3. Pass Intent to sendBroadcast() or sendOrderedBroadcast() or sendStickyBroadcast()
+
+Android Manifest: an xml file contains info about all components of the application.
++ identifies user permissions
++ declare minium API level required
++ declare hardware and software features used or required by the app
++ declare API libraries the app needed to linked against
+
+Activity lifecycle:
++ Activity class provides a number of callbacks allowing activity to know that a Started
+has changed.
++ 6 callbacks: onCreate(), onStart(), onResume(), onPause(), onStop(), onDestroy()
++ onCreate(): init all resource, perform start up logic that should happen only once for the
+entire life of activity. Bind data to lists, associate the activity with ViewModel
+
+
+
+

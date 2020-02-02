@@ -1,0 +1,70 @@
+C++
+Const correctness:
+const X* ptr; // a pointer to a constant object. can't change the object via pointer
+X* const ptr; // a constant pointer to an object. you can't change the pointer but you can
+change the object via pointer
+const X* const ptr; // a constant pointer to a constant object. you can't change either
+pointer or object
+const X& x; // an alias for a constant object or a reference to a constant object
+X const& x;// = const X&x
+X const* ptr;//  = const X* ptr
+East const=> const always on the right
+
+const correctness -> 
+a pair of operator: a const inspector and a non const mutator, both have the same name
+and same parameters. when the operator is called, compiler will resolve and select
+the correct operator based on the constness of the object the operator is acting on
+
+Memory Management:
+malloc is a function while new is operator. operator is faster than function call.
+malloc allocate raw memory, while new construct new objects
+new guarantee proper construction and destruction while malloc doesn't
+
+malloc() is a function takes a number of bytes as argument and returns a void pointer
+pointing to uninitialized storage.
+
+new is an operator takes a type and return a pointer to an initilized object of its type
+delete p is a two step process: it calls the destructore then releases the memory
+
+auto p = new Fred(); // if the Fred constructor throws an exception, C++ guarantees that
+the memory sizeof(Fred) bytes that were allocated will be released back to the heap
+
+heap memory corruption:
+
+Inlined Function:
+What happens when a function is called. The registers and parameters get written to the stack
+just before the call to a function. the parameters read from stack inside function 
+and read again to restore the registers while the function returns
+
+compiler:
+Lexing->break down program into tokens
+Parsing->convert sequences of token into a parse tree and verify the grammer
+Optimization->evaluate constant expressions
+Translate->translate the parse tree into machine code
+
+preprocess->compilation->assembler->linking
+
+variable scope:
+local: in function or block
+global: in a program
+
+bitwise operator: 
+<< >> & ~ | ^
+
+pointer:
+void pointer-> can point to any type of pointer, if you want to assign a pointer to a void
+pointer, you have to cast the void pointer to the type of that pointer first
+pointer arithmetic: ++, --, +=, -= increase the address of pointer by sizeof(pointer)
+function pointer-> int(*operater)(int, int -> a pointer points to any function that
+return an int and take 2 int as arguments
+
+storage class: auto, register, mutable, static, extern
+auto: local
+register: on register
+mutable: allow modify const variable, apply to only class data members
+static: live on even the variable goes out of scope, can be seen in only the file declared
+extern: global, can seen across many files
+
+
+reading a find
+fgets(str, 10, stdin)

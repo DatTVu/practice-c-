@@ -1,0 +1,57 @@
+Design Pattern
+
+Singleton
+
+// ConsoleApplication2.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include <iostream>
+#include <vector>
+#include <memory>
+#include "vld.h"
+#include <string>
+#include <algorithm>
+using std::cout;
+using std::endl;
+using std::cin;
+
+class Singleton {
+private:
+    static Singleton* m_instance;
+    int m_data;
+    Singleton() {
+        m_data = 0;
+    }    
+public:
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+    static Singleton* getInstance() {
+        if (!m_instance)
+            m_instance = new Singleton();
+        return m_instance;
+    }
+
+    int getData() {
+        return m_data;
+    }
+
+    void setData(int data_) {
+        m_data = data_;
+    }
+    static void destroyInstance() {
+        delete m_instance;
+    }
+};
+
+Singleton* Singleton::m_instance = 0;
+int main()
+{
+    Singleton* s = s->getInstance();
+    cout << s->getData() << endl;
+    s->setData(100);
+    cout << s->getData() << endl;
+    s->destroyInstance();
+    cout << "Press any key" << endl;
+    char ch;
+    cin.getline(&ch, 1);
+ }
