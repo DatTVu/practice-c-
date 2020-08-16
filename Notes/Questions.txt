@@ -1,0 +1,17 @@
+Virtual in c++
+-use to achieve polymorphorism at run time or late binding. early binding or polymorphorism is achieved by overloading
+-override and final -> two key words added in C++11 to 1. check if it override a base class. 2. make sure nobody is
+overriding it
+-virtual= 0 -> pure virtual. class with at least 1 pure virtual method. it helps to create abstract classes or interface.
+it is useful when a group of subclasses share the same idea of how they operate but the exact way they operate or their
+implementations are slightly different. unlike virtual, pure virtual require you to implement it. pure virtual is not
+initialized.
+-vtable and __vptr: each object has a special hidden pointer called __vptr that points to its class vtable. vtable is 
+a table consists of all virtual functions for that class. vtable will help the program to navigate and choose the correct
+function to use at run time. it will always choose the most derived function. if there is no derived function, then it will
+go to the base function.
+-__vptr is an actual pointer. unlike this pointer which is just a parameter c++ use to resolve object self referencing.
+-virtual can also be used as an inheritance mode. virtual inheritance is utilized to solve the diamond problem in OOP.
+it ensures there is only 1 copy of base class in the derived class. coupled with scope resolator ::, it will help to choose
+the correct function to call in the diamon problem.
+-virtual destructor
