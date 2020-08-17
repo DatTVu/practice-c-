@@ -1,33 +1,31 @@
-#ifndef LINKED_LIST_H
-#define LINKED_LIST_H
+#ifndef LINKED_LIST_H_
+#define LINKED_LIST_H_
 
 #include <thread>
-template <typename T>
+#include "ListNode.h"
+template <class T>
 class LinkedList
 {
 public:
-    LinkedList() noexcept;
-    ~LinkedList() noexcept;
-    pushfront();
-    front();
-    popfront();
-    pushback();
-    back();
-    popback();
-    empty();
-    insertbefore(int ndx);
-    insertafter(int ndx);
-    size();
-    value_at();
-    insert(int ndx, T value);
-    erase(int ndx);
-    reverse();
-    remove_first_value(T value);
-protected:
+    explicit LinkedList() noexcept;
+    ~LinkedList();
+    size_t size();
+    void push_front(T val);
+    void front(T& val);
+    bool empty();
+    void pop_front(T& val);
+    void push_back(T val);
+    void back(T& val);
+    void pop_back(T& val);
+    void insert_before(int ndx, T val);
+    void insert_after(int ndx, T val);
+    T value_at(int ndx);
+    void erase(int ndx);
+    void reverse();
+    void remove_first_value(T value);
+    void displaye();
 private:
-    LinkedList* m_ptrNext;
-    T m_data;
+    ListNode<T>* m_ptrHead;
     std::mutex m_mutex;
 };
 #endif
-

@@ -1,102 +1,243 @@
 #include "LinkedList.h"
 #include <iostream>
-DynamicArray::DynamicArray(int capacity) :  m_capacity(capacity),
-                                            m_size(0)                                            
+#include <exception>
+
+struct empty_list: std::exception
 {
-    m_data = new int[capacity];
+    const char* what() const throw();
+};
+
+template <class T> 
+LinkedList<T>::LinkedList()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    m_ptrHead = nullptr;
 }
 
-bool DynamicArray::is_empty(){
-    if (m_size==0)
-        return true;
-    else
-        return false;
-}
+template <class T>
+LinkedList<T>::~LinkedList()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    //to consider this for thread safe
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    ListNode<T>* ptrNext = nullptr;
 
-DynamicArray::~DynamicArray() {  
-    delete[] m_data;            
-}
-
-int DynamicArray::item_at(int index){
-    if ((index + 1) > m_size) {
-        std::cout << "Index is out of bound" << std::endl;
-        return -1;
-    }        
-    else
-        return m_data[index];
-}
-
-void DynamicArray::pushback(int item){
-    if (m_size >= m_capacity){
-        resize(2*m_capacity);       
-    }        
-    m_data[m_size] = item;
-    ++m_size;
-}
-
-void DynamicArray::insert(int item, int index){
-    if (index >= m_size || index < 0) {
-        std::cout << "Invalid index" << std::endl;
-        return;
-    }
-    if((m_size+1) >= m_capacity){
-       resize(2*m_capacity);       
-    }
-    std::memmove(&m_data[index + 1], &m_data[index], sizeof(int)*(m_size-index+1));
-    m_data[index] = item;
-    ++m_size;
-}
-
-void DynamicArray::prepend(int item){
-    insert(item, 0);
-}
-
-void DynamicArray::popback(){
-    m_data[m_size-1] = NULL;
-    --m_size;    
-    if(m_size ==(m_capacity/4))
-        resize(m_capacity/2);
-}
-
-void DynamicArray::delete_item(int index){
-    if (index >= m_size || index < 0) {
-        std::cout << "Invalid index" << std::endl;
-        return;
-    }   
-    std::memmove(&m_data[index], &m_data[index+1], sizeof(int)*(m_size-index+1));
-    m_data[m_size-1] = NULL;
-    --m_size;
-}
-
-void DynamicArray::find(int item){
-    for (int i =0; i<m_size; i++){
-        if (m_data[i]==item)
-            std::cout << "Found number "<< item<<" at index " << i <<std::endl;
-    }
-}
-
-void DynamicArray::remove_item(int item) {
-    for (int i = 0; i < m_size; i++) {
-        if (m_data[i] == item)
-            delete_item(i);
-    }
-}
-
-void DynamicArray::resize(int new_capacity){
-    int* temp_array = new int[new_capacity];    
-    int* swap_array = nullptr;
-    std::memcpy(temp_array, m_data, sizeof(int)*m_size);    
-    swap_array = m_data;
-    m_data = temp_array;
-    temp_array = nullptr;
-    delete[] swap_array;
-    m_capacity = new_capacity;
-}
-
-void DynamicArray::display(){
-    for (int i = 0; i < m_size; i++)
+    while(ptrCurrent != nullptr)
     {
-        std::cout << m_data[i] << " ";
+        ptrNext = ptrCurrent->GetNext();
+        delete ptrCurrent;
+        ptrCurrent = ptrNext;
     }
-    std::cout << "" << std::endl;
 }
+
+template <class T>
+size_t LinkedList<T>::size()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    size_t size = 0;
+
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    while(ptrCurrent != nullptr)
+    {
+        ptrCurrent = ptrCurrent->GetNext();
+        ++size;
+    }
+    return size;
+}
+
+template <class T>
+void LinkedList<T>::push_front(T val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    ListNode<T>* ptrNode = new ListNode<T>(val);
+    ptrNode->SetNext(m_ptrHead);
+    m_ptrHead = ptrNode;
+}
+
+template <class T>
+void LinkedList<T>::front(T& val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        throw empty_list();
+    val = m_ptrHead->GetData();
+}
+
+template <class T>
+bool LinkedList<T>::empty()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    return (m_ptrHead==nullptr);
+}
+
+template <class T>
+void LinkedList<T>::pop_front(T& val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        throw empty_list();
+
+    val = m_ptrHead->GetData();
+    ListNode<T>* ptrNext = m_ptrHead->GetNext();
+    delete m_ptrHead;
+    m_ptrHead = ptrNext;
+}
+
+template <class T>
+void LinkedList<T>::push_back(T val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    ListNode<T>* ptrNode = new ListNode<T>(val);
+    if(m_ptrHead==nullptr)
+    {
+        m_ptrHead = ptrNode;
+        return;
+    }
+
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    while(ptrCurrent->GetNext()!=nullptr)
+    {
+        ptrCurrent = ptrCurrent->GetNext();
+    }
+
+    ptrCurrent->SetNext(ptrNode);
+}
+
+template <class T>
+void LinkedList<T>::back(T& val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        throw empty_list();
+
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    while(ptrCurrent->GetNext()!=nullptr)
+    {
+        ptrCurrent = ptrCurrent->GetNext();
+    }
+    val = ptrCurrent->GetData();
+}
+
+template <class T>
+void LinkedList<T>::pop_back(T& val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead == nullptr)
+        throw empty_list();
+
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    ListNode<T>* ptrPrevious = nullptr;
+    while(ptrCurrent->GetNext()!=nullptr)
+    {
+        ptrPrevious = ptrCurrent;
+        ptrCurrent = ptrCurrent->GetNext();
+    }
+    val = ptrCurrent->GetData();
+    delete ptrCurrent;
+    if(ptrPrevious==nullptr)
+        m_ptrHead = ptrPrevious;
+    else
+        ptrPrevious->SetNext(nullptr);
+}
+
+template <class T>
+void LinkedList<T>::insert_before(int ndx, T val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr && ndx > 0)
+        throw empty_list();
+
+    int ndxCurrent = 0;
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    ListNode<T>* ptrPrevious = nullptr;
+    while(ptrCurrent->GetNext()!=nullptr)
+    {
+        if(ndxCurrent==ndx)
+            break;
+        else
+        {
+            ++ndxCurrent;
+            ptrPrevious = ptrCurrent;
+            ptrCurrent = ptrCurrent->GetNext();    
+        }
+    }
+
+    if(ndxCurrent!=ndx)
+        return;
+    
+    ListNode<T>* ptrNode = new ListNode<T>(val);
+    ptrPrevious->SetNext(ptrNode);
+    ptrNode->SetNext(ptrCurrent);
+}
+
+template <class T>
+void LinkedList<T>::insert_after(int ndx, T val)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr && ndx>0)
+        throw empty_list();
+    
+    int ndxCurrent = 0;
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    while(ptrCurrent->GetNext()!= nullptr)
+    {
+        if(ndxCurrent==ndx)
+            break;
+        else
+        {
+            ++ndxCurrent;
+            ptrCurrent = ptrCurrent->GetNext();    
+        }
+    }
+
+    if(ndxCurrent!=ndx)
+        return;
+
+    ListNode<T>* ptrNode = new ListNode<T>(val);
+    ptrCurrent->SetNext(ptrNode);
+    if(ptrCurrent == nullptr)
+    {
+        ptrNode->SetNext(nullptr);
+    }
+    else
+    {
+        ListNode<T>* ptrNext= ptrCurrent->GetNext();
+        ptrNode->SetNext(ptrNext);
+    }
+}
+
+template <class T>
+T LinkedList<T>::value_at(int ndx)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        throw empty_list();
+    
+    int ndxCurrent = 0;
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    while(ptrCurrent->GetNext()!=nullptr)
+    {
+        if(ndxCurrent==ndx)
+            break;
+        else
+        {
+            ++ndxCurrent;
+            ptrCurrent=ptrCurrent->GetNext();
+        }
+    }
+
+    if(ndxCurrent!=ndx)
+        return;
+
+    T value = ptrCurrent->GetData();
+    return value;
+}
+
+template <class T>
+void erase(int ndx);
+template <class T>
+void reverse();
+template <class T>
+void remove_first_value(T value);
+template <class T>
+void display();
