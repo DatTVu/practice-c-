@@ -23,7 +23,7 @@ public:
     void erase(int ndx);
     void reverse();
     void remove_first_value(T value);
-    void displaye();
+    void display();
 private:
     ListNode<T>* m_ptrHead;
     std::mutex m_mutex;

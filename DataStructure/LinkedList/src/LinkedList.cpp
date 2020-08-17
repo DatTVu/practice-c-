@@ -234,10 +234,92 @@ T LinkedList<T>::value_at(int ndx)
 }
 
 template <class T>
-void erase(int ndx);
+void LinkedList<T>::erase(int ndx)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        throw empty_list();
+
+    int ndxCurrent = 0;
+    ListNode<T>* ptrCurrent = m_ptrHead;
+    ListNode<T>* ptrPrevious = nullptr;
+    while(ptrCurrent->GetNext()!=nullptr)
+    {
+        if(ndxCurrent==ndx)
+            break;
+        else
+        {
+            ++ndxCurrent;
+            ptrPrevious = ptrCurrent;
+            ptrCurrent = ptrCurrent->GetNext();
+        }
+    }
+    if(ndxCurrent!=ndx)
+        return;
+    
+    
+    if(ptrNext!=nullptr)
+    {
+        ListNode<T>* ptrNext = ptrCurrent->GetNext();
+        ptrPrevious->SetNext(ptrNext);
+    }
+    else
+    {
+        ptrPrevious->SetNext(nullptr);
+    }
+
+    delete ptrCurrent;
+}
+
 template <class T>
-void reverse();
+void LinkedList<T>::reverse()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        return;
+    
+    ListNode<T>* ptrCur = head;
+    ListNode<T>* ptrPrev = nullptr;
+    while(ptrCur!=nullptr)
+    {
+        ListNode<T>* ptrNext = ptrCur->GetNext();
+        ptrCur->SetNext(ptrPrev);
+        ptrPrev = ptrCur;
+        ptrCur = ptrNext;
+    }
+
+    return ptrPrev;
+}
+
 template <class T>
-void remove_first_value(T value);
+void LinkedList<T>::remove_first_value(T value)
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    ListNode<T>* ptrCur = m_ptrHead;
+    ListNode<T>* ptrPrev = m_ptrHead;
+    while(ptrCur!=nullptr)
+    {
+        if(value == ptrCur->GetData())
+        {
+            ptrPrev->SetNext(ptrCur->GetNext());
+            delete ptrCur;
+            break;
+        }
+        ptrPrev = ptrCur;
+        ptrCur = ptrCur->GetNext();
+    }
+}
+
 template <class T>
-void display();
+void LinkedList<T>::display()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if(m_ptrHead==nullptr)
+        return;
+    ListNode<T>* ptrCur = m_ptrHead;
+    while(ptrCur!=nullptr)
+    {
+        std::cout<< ptrCur->GetData() << " -> ";
+    }
+    std::cout<< "\n" ;
+}
