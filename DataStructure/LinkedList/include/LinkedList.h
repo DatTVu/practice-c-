@@ -2,6 +2,7 @@
 #define LINKED_LIST_H_
 
 #include <thread>
+#include <mutex>
 #include "ListNode.h"
 template <class T>
 class LinkedList
@@ -9,6 +10,7 @@ class LinkedList
 public:
     explicit LinkedList() noexcept;
     ~LinkedList();
+    LinkedList(const LinkedList<T>& list);
     size_t size();
     void push_front(T val);
     void front(T& val);

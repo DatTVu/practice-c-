@@ -9,11 +9,11 @@ public:
     ListNode(const T &val): m_data(val), m_ptrNext(nullptr){}
     ~ListNode(){};
     ListNode(const ListNode&) = delete;
-    ListNode operator = (const ListNode&) = default;
-    const T& GetData() {return m_data;}
-    const ListNode<T>* GetNext() {return m_ptrNext;}
-    SetData(const T& val){m_data = val};
-    SetNext(ListNode<T>* ptr){m_ptrNext = ptr};
+    //ListNode operator= (const ListNode&) = default;
+    const T& GetData() { return m_data; }
+    ListNode<T>* GetNext() {return m_ptrNext;}
+    void SetData(const T& val) { m_data = val; }
+    void SetNext(ListNode<T>* ptr) { m_ptrNext = ptr; }
 private:
     ListNode<T>* m_ptrNext;
     T            m_data;

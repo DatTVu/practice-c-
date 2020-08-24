@@ -4,21 +4,27 @@
 
 struct empty_list: std::exception
 {
-    const char* what() const throw();
 };
 
 template <class T> 
-LinkedList<T>::LinkedList()
+LinkedList<T>::LinkedList() noexcept
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     m_ptrHead = nullptr;
 }
 
 template <class T>
+LinkedList<T>::LinkedList(const LinkedList<T>& list)
+{
+    std::lock_guard<std::mutex> lock(list.m_mutex);
+    m_ptrHead = list.m_ptrHead;
+    list.m_ptrHead = nullptr;
+}
+
+template <class T>
 LinkedList<T>::~LinkedList()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    //to consider this for thread safe
     ListNode<T>* ptrCurrent = m_ptrHead;
     ListNode<T>* ptrNext = nullptr;
 
@@ -95,7 +101,7 @@ void LinkedList<T>::push_back(T val)
     }
 
     ListNode<T>* ptrCurrent = m_ptrHead;
-    while(ptrCurrent->GetNext()!=nullptr)
+    while (ptrCurrent->GetNext()!=nullptr)
     {
         ptrCurrent = ptrCurrent->GetNext();
     }
@@ -320,6 +326,7 @@ void LinkedList<T>::display()
     while(ptrCur!=nullptr)
     {
         std::cout<< ptrCur->GetData() << " -> ";
+        ptrCur = ptrCur->GetNext();
     }
     std::cout<< "\n" ;
 }
