@@ -27,7 +27,7 @@ public:
     void remove_first_value(T value);
     void display();
 private:
-    ListNode<T>* m_ptrHead;
-    std::mutex m_mutex;
+    mutable ListNode<T>* m_ptrHead;
+    mutable std::mutex m_mutex;
 };
 #endif

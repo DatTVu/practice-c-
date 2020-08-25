@@ -128,7 +128,7 @@ template <class T>
 void LinkedList<T>::pop_back(T& val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_ptrHead == nullptr)
+    if (m_ptrHead == nullptr)
         throw empty_list();
 
     ListNode<T>* ptrCurrent = m_ptrHead;
