@@ -7,6 +7,11 @@
 template <class T>
 class LinkedList
 {
+private:
+    mutable ListNode<T>* m_ptrHead{ nullptr };
+    mutable std::mutex m_mutex;
+    void erase_impl(int ndx);
+    size_t size_impl();
 public:
     explicit LinkedList() noexcept;
     ~LinkedList();
@@ -26,8 +31,5 @@ public:
     void reverse();
     void remove_first_value(T value);
     void display();
-private:
-    mutable ListNode<T>* m_ptrHead;
-    mutable std::mutex m_mutex;
 };
 #endif

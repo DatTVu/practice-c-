@@ -2,8 +2,12 @@
 #include <iostream>
 #include <exception>
 
-struct empty_list: std::exception
+struct OutOfRange: std::exception
 {
+    const char* what() const throw()
+    {
+        return "Out of Range";
+    }
 };
 
 template <class T> 
@@ -40,10 +44,15 @@ template <class T>
 size_t LinkedList<T>::size()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    size_t size = 0;
+    return size_impl();
+}
 
+template <class T>
+size_t LinkedList<T>::size_impl()
+{
+    size_t size = 0;
     ListNode<T>* ptrCurrent = m_ptrHead;
-    while(ptrCurrent != nullptr)
+    while (ptrCurrent != nullptr)
     {
         ptrCurrent = ptrCurrent->GetNext();
         ++size;
@@ -65,7 +74,7 @@ void LinkedList<T>::front(T& val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if(m_ptrHead==nullptr)
-        throw empty_list();
+        throw OutOfRange();
     val = m_ptrHead->GetData();
 }
 
@@ -81,7 +90,7 @@ void LinkedList<T>::pop_front(T& val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if(m_ptrHead==nullptr)
-        throw empty_list();
+        throw OutOfRange();
 
     val = m_ptrHead->GetData();
     ListNode<T>* ptrNext = m_ptrHead->GetNext();
@@ -114,7 +123,7 @@ void LinkedList<T>::back(T& val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if(m_ptrHead==nullptr)
-        throw empty_list();
+        throw OutOfRange();
 
     ListNode<T>* ptrCurrent = m_ptrHead;
     while(ptrCurrent->GetNext()!=nullptr)
@@ -129,7 +138,7 @@ void LinkedList<T>::pop_back(T& val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (m_ptrHead == nullptr)
-        throw empty_list();
+        throw OutOfRange();
 
     ListNode<T>* ptrCurrent = m_ptrHead;
     ListNode<T>* ptrPrevious = nullptr;
@@ -150,57 +159,51 @@ template <class T>
 void LinkedList<T>::insert_before(int ndx, T val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_ptrHead==nullptr && ndx > 0)
-        throw empty_list();
+    int index_range_ = static_cast<int>(this->size_impl()) - 1;
+    if(ndx > index_range_ || ndx < 0)
+        throw OutOfRange();
 
-    int ndxCurrent = 0;
-    ListNode<T>* ptrCurrent = m_ptrHead;
-    ListNode<T>* ptrPrevious = nullptr;
-    while(ptrCurrent->GetNext()!=nullptr)
+    ListNode<T>* ptrInsertNode = new ListNode<T>(val);
+    if (ndx == 0)
     {
-        if(ndxCurrent==ndx)
-            break;
-        else
+        ListNode<T>* ptrNext = m_ptrHead->GetNext();
+        m_ptrHead->SetNext(ptrInsertNode);
+        ptrInsertNode->SetNext(ptrNext);
+    }
+    else
+    {
+        ListNode<T>* ptrCurrent = m_ptrHead;
+        ListNode<T>* ptrPrevious = ptrCurrent;
+        int ndxCurrent = 0;
+        while (ndxCurrent != ndx)
         {
             ++ndxCurrent;
             ptrPrevious = ptrCurrent;
-            ptrCurrent = ptrCurrent->GetNext();    
+            ptrCurrent = ptrCurrent->GetNext();
         }
-    }
 
-    if(ndxCurrent!=ndx)
-        return;
-    
-    ListNode<T>* ptrNode = new ListNode<T>(val);
-    ptrPrevious->SetNext(ptrNode);
-    ptrNode->SetNext(ptrCurrent);
+        ptrInsertNode->SetNext(ptrCurrent);
+        ptrPrevious->SetNext(ptrInsertNode);
+    }
 }
 
 template <class T>
 void LinkedList<T>::insert_after(int ndx, T val)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_ptrHead==nullptr && ndx>0)
-        throw empty_list();
+    int index_range_ = static_cast<int>(this->size_impl()) - 1;
+    if (ndx > index_range_ || ndx < 0)
+        throw OutOfRange();
     
     int ndxCurrent = 0;
     ListNode<T>* ptrCurrent = m_ptrHead;
-    while(ptrCurrent->GetNext()!= nullptr)
+    while(ndxCurrent != ndx)
     {
-        if(ndxCurrent==ndx)
-            break;
-        else
-        {
-            ++ndxCurrent;
-            ptrCurrent = ptrCurrent->GetNext();    
-        }
+        ++ndxCurrent;
+        ptrCurrent = ptrCurrent->GetNext();
     }
 
-    if(ndxCurrent!=ndx)
-        return;
-
     ListNode<T>* ptrNode = new ListNode<T>(val);
-    ptrCurrent->SetNext(ptrNode);
     if(ptrCurrent == nullptr)
     {
         ptrNode->SetNext(nullptr);
@@ -210,71 +213,53 @@ void LinkedList<T>::insert_after(int ndx, T val)
         ListNode<T>* ptrNext= ptrCurrent->GetNext();
         ptrNode->SetNext(ptrNext);
     }
+    ptrCurrent->SetNext(ptrNode);
 }
 
 template <class T>
 T LinkedList<T>::value_at(int ndx)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_ptrHead==nullptr)
-        throw empty_list();
+    int index_range_ = static_cast<int>(this->size_impl()) - 1;
+    if(ndx > index_range_ || ndx < 0)
+        throw OutOfRange();
     
     int ndxCurrent = 0;
     ListNode<T>* ptrCurrent = m_ptrHead;
-    while(ptrCurrent->GetNext()!=nullptr)
+    while(ndxCurrent!=ndx)
     {
-        if(ndxCurrent==ndx)
-            break;
-        else
-        {
-            ++ndxCurrent;
-            ptrCurrent=ptrCurrent->GetNext();
-        }
+        ++ndxCurrent;
+        ptrCurrent = ptrCurrent->GetNext();
     }
-
-    if(ndxCurrent!=ndx)
-        return;
-
-    T value = ptrCurrent->GetData();
-    return value;
+    
+    return ptrCurrent->GetData();
 }
 
 template <class T>
 void LinkedList<T>::erase(int ndx)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_ptrHead==nullptr)
-        throw empty_list();
+    erase_impl(ndx);
+}
 
+template <class T>
+void LinkedList<T>::erase_impl(int ndx)
+{
+    int index_range_ = static_cast<int>(this->size_impl()) - 1;
+    if (ndx > index_range_ || ndx < 0)
+        throw OutOfRange();
+
+    ListNode<T>** ptrCurrent = &m_ptrHead;
     int ndxCurrent = 0;
-    ListNode<T>* ptrCurrent = m_ptrHead;
-    ListNode<T>* ptrPrevious = nullptr;
-    while(ptrCurrent->GetNext()!=nullptr)
+    while (ndxCurrent != ndx)
     {
-        if(ndxCurrent==ndx)
-            break;
-        else
-        {
-            ++ndxCurrent;
-            ptrPrevious = ptrCurrent;
-            ptrCurrent = ptrCurrent->GetNext();
-        }
-    }
-    if(ndxCurrent!=ndx)
-        return;
-    
-    
-    if(ptrNext!=nullptr)
-    {
-        ListNode<T>* ptrNext = ptrCurrent->GetNext();
-        ptrPrevious->SetNext(ptrNext);
-    }
-    else
-    {
-        ptrPrevious->SetNext(nullptr);
+        ++ndxCurrent;
+        *ptrCurrent = (*ptrCurrent)->GetNext();
     }
 
-    delete ptrCurrent;
+    ListNode<T>* ptrDelNode = *ptrCurrent;
+    *ptrCurrent = ptrDelNode->GetNext();
+    delete ptrDelNode;
 }
 
 template <class T>
@@ -282,9 +267,9 @@ void LinkedList<T>::reverse()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if(m_ptrHead==nullptr)
-        return;
+        throw OutOfRange();
     
-    ListNode<T>* ptrCur = head;
+    ListNode<T>* ptrCur = m_ptrHead;
     ListNode<T>* ptrPrev = nullptr;
     while(ptrCur!=nullptr)
     {
@@ -293,8 +278,8 @@ void LinkedList<T>::reverse()
         ptrPrev = ptrCur;
         ptrCur = ptrNext;
     }
-
-    return ptrPrev;
+    
+    m_ptrHead = ptrPrev;
 }
 
 template <class T>
@@ -302,17 +287,16 @@ void LinkedList<T>::remove_first_value(T value)
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     ListNode<T>* ptrCur = m_ptrHead;
-    ListNode<T>* ptrPrev = m_ptrHead;
+    int ndxCurrent = 0;
     while(ptrCur!=nullptr)
     {
         if(value == ptrCur->GetData())
         {
-            ptrPrev->SetNext(ptrCur->GetNext());
-            delete ptrCur;
+            erase_impl(ndxCurrent);
             break;
         }
-        ptrPrev = ptrCur;
         ptrCur = ptrCur->GetNext();
+        ++ndxCurrent;
     }
 }
 
@@ -320,8 +304,11 @@ template <class T>
 void LinkedList<T>::display()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if(m_ptrHead==nullptr)
+    if (m_ptrHead == nullptr)
+    {
+        std::cout << "List is emptied\n";
         return;
+    }
     ListNode<T>* ptrCur = m_ptrHead;
     while(ptrCur!=nullptr)
     {
