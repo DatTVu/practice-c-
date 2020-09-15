@@ -33,6 +33,7 @@ ArrayQueue<T>::ArrayQueue(const ArrayQueue<T>& src)
 {
     std::lock_guard<std::mutex> lock(src.m_mutex);
     m_capacity = src.m_capacity;
+    m_size = src.m_size;
     m_ptrData = std::make_unique<T[]>(m_capacity);
     for(size_t i = 0; i < src.m_capacity; ++i)
     {
@@ -53,14 +54,25 @@ void ArrayQueue<T>::enqueue(T val)
     ++m_size;
 }
 
+template <class T>
+T ArrayQueue<T>::top()
+{
+    std::lock_guard<std::mutex> lock(m_mutex);
+    if (m_size == 0)
+        throw OutOfRange();
+
+    return m_ptrData[m_ndxHead];
+}
+
 template<class T>
 T ArrayQueue<T>::dequeue()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
     if(m_size == 0)
-        return;
+        throw OutOfRange();
     
     T result_ = m_ptrData[m_ndxHead];
+    m_ptrData[m_ndxHead] = NULL;
     m_ndxHead = (m_ndxHead + 1) % m_capacity;
     --m_size;
     return result_;
@@ -77,7 +89,7 @@ template<class T>
 bool ArrayQueue<T>::full()
 {
     std::lock_guard<std::mutex> lock(m_mutex);
-    return full_impl();
+    return (m_size == m_capacity);
 }
 
 template<class T>
@@ -86,7 +98,8 @@ void ArrayQueue<T>::display()
     std::lock_guard<std::mutex> lock(m_mutex);
     for (std::size_t i = 0; i < m_capacity; ++i)
     {
-        std::cout << m_ptrData[i] << " ";
+        if(m_ptrData[i]!=NULL)
+            std::cout << m_ptrData[i] << " ";
     }
     std::cout <<"\n";
 }

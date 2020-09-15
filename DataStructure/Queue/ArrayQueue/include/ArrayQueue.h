@@ -14,7 +14,6 @@ class ArrayQueue{
         mutable std::mutex m_mutex;
         size_t m_size{0};
         size_t m_capacity{k_default_capacity};
-        bool full_impl();
     public:
         ArrayQueue();
         ~ArrayQueue();
@@ -27,6 +26,7 @@ class ArrayQueue{
         bool full();
         void enqueue(T val);
         T dequeue();
+        T top();
         void display();
 
     friend void swap(ArrayQueue<T>& lhs, ArrayQueue<T>& rhs) noexcept;
