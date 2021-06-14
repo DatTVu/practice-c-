@@ -8,6 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(SOURCES
 	src/main.cpp
 	src/HashTable.cpp
+	src/HashObject.cpp
 )
 
 add_executable(hash_table ${SOURCES})

@@ -3,9 +3,9 @@
 #include "ArrayQueue.cpp"
 #include <thread>
 
-void dequeue(ArrayQueue<int>& src) 
+void dequeue(ArrayQueue<int> &src)
 {
-    while(!src.empty())
+    while (!src.empty())
     {
         int res = src.dequeue();
         std::this_thread::sleep_for(std::chrono::milliseconds(200));
@@ -13,7 +13,7 @@ void dequeue(ArrayQueue<int>& src)
     }
 }
 
-void populate(ArrayQueue<int>& src, int numOfElement)
+void populate(ArrayQueue<int> &src, int numOfElement)
 {
     for (int i = 1; i < numOfElement; ++i)
     {
@@ -22,17 +22,18 @@ void populate(ArrayQueue<int>& src, int numOfElement)
 }
 
 int main()
-{   
+{
     //Test copied constructor
     ArrayQueue<int> test;
     populate(test, 100);
-    test.display();   
+    test.display();
     ArrayQueue<int> copiedTest = test;
+
     copiedTest.display();
 
     //Test full API
-    _ASSERT(copiedTest.full()==true);
-    _ASSERT(test.full()==true);
+    _ASSERT(copiedTest.full() == true);
+    _ASSERT(test.full() == true);
 
     //Test dequeue API on 2 threads
     std::thread dequeue_thread_1 = std::thread(dequeue, std::ref(test));
@@ -52,5 +53,4 @@ int main()
     std::thread enqueue_thread_1 = std::thread(populate, std::ref(capacityTest), 10);
     dequeue_thread_3.join();
     enqueue_thread_1.join();
-
 }
