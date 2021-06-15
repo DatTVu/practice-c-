@@ -21,11 +21,13 @@ namespace ADT {
 		HashObject<T>& operator=(const HashObject<T>& src) = delete;
 		HashObject<T>&& operator=(HashObject<T>&& src) = delete;
 		//Method
-		bool IsNull();
+		HashFlag GetFlag();
 		void SetFlag(HashFlag flag);
+		void AddValue(T value);
 		T Get();
+		std::string GetKey();
 	private:
-		std::string m_key;
+		std::string m_key = "";
 		T m_value;
 		HashFlag m_flag{ HashFlag::EMPTY };
 	};

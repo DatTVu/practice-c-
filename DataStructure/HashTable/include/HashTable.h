@@ -53,14 +53,15 @@ namespace ADT {
     private:
         HashObject<T>* m_data{ new HashObject<T>[k_default_capacity] };
         //Default capacity should be an prime odd number to disperse the keys evenly among the array slots
-        constexpr std::size_t static k_default_capacity = 13;
-        mutable std::mutex m_mutex;
+        constexpr std::size_t k_default_capacity = 13;
+        constexpr float k_growth_factor = 0.5;
+        constexpr float k_shrink_factor = 0.2;
         std::size_t m_capacity{ k_default_capacity };
         std::size_t m_size{ 0 };
 
         //Private Function Members
     private:
-        void Resize();
+        void ResizeIfNeeded();
     };
 }
 #endif //HASH_TABLE_H_
