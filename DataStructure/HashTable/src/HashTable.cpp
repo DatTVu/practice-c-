@@ -1,5 +1,7 @@
 #include <iostream>
 #include "HashTable.h"
+#include "HashObject.cpp"
+#include "utils.h"
 
 namespace ADT {
 	template<class T>
@@ -22,36 +24,36 @@ namespace ADT {
 	}
 
 	template<class T>
-	int HashTable<T>::Hash(const std::string& key) {
+	int HashTable<T>::Hash(const std::string& key, std::size_t capacity) {
 		//This is djb2 hash function.
 		int iKeyLength_ = static_cast<int>(key.length());
 		int hashCode = 5381;
 		for (int i = 0; i < iKeyLength_; ++i) {
 			hashCode = hashCode * 33 ^ key[i];
 		}
-		return (hashCode % m_capacity);
+		return (hashCode % capacity);
 	}
 
 	template<class T>
 	void HashTable<T>::Add(const std::string& key, const T& value) {
 		++m_size;
 		ResizeIfNeeded();
-		int hashCode = Hash(key);
-		HashFlag flag = m_data[hashCode].GetFlag();
-		while (flag == HashFlag::OCCUPPIED) {
+		int hashCode = Hash(key, m_capacity);
+		ADT::HashFlag flag = m_data[hashCode].GetFlag();
+		while (flag == ADT::HashFlag::OCCUPPIED) {
 			hashCode = (hashCode + 1) % m_capacity;
 			flag = m_data[hashCode].GetFlag();
 		}
-		m_data[hashCode].AddValue(value);
+		m_data[hashCode].AddValue(key, value);
 	}
 
 	template<class T>
 	bool HashTable<T>::IsExists(const std::string& key) {
 		bool result = false;
-		int hashCode = Hash(key);
-		HashFlag flag = m_data[hashCode].GetFlag();
+		int hashCode = Hash(key, m_capacity);
+		ADT::HashFlag flag = m_data[hashCode].GetFlag();
 		int count = 0;
-		while ((flag == HashFlag::DELETED || (flag == HashFlag::OCCUPPIED && m_data[hashCode].GetKey() != key))
+		while ((flag == ADT::HashFlag::DELETED || (flag == ADT::HashFlag::OCCUPPIED && m_data[hashCode].GetKey() != key))
 			&& (count <= m_capacity)) {
 			hashCode = (hashCode + 1) % m_capacity;
 			++count;
@@ -63,42 +65,42 @@ namespace ADT {
 	}
 
 	template<class T>
-	T HashTable<T>::Get(const std::string& key) {
-		int hashCode = Hash(key);
-		HashFlag flag = m_data[hashCode].GetFlag();
+	T HashTable<T>::GetValue(const std::string& key) {
+		int hashCode = Hash(key, m_capacity);
+		ADT::HashFlag flag = m_data[hashCode].GetFlag();
 		int count = 0;
-		while ((flag == HashFlag::DELETED || (flag == HashFlag::OCCUPPIED && m_data[hashCode].GetKey() != key))
+		while ((flag == ADT::HashFlag::DELETED || (flag == ADT::HashFlag::OCCUPPIED && m_data[hashCode].GetKey() != key))
 			&& (count <= m_capacity)) {
 			hashCode = (hashCode + 1) % m_capacity;
 			flag = m_data[hashCode].GetFlag();
 			++count;
 		}
 		if (m_data[hashCode].GetKey() == key) {
-			return m_data[hashCode].GetKey();
+			return m_data[hashCode].GetValue();
 		}
 		else {
-			throw std::out_of_range;
+			throw;
 		}
-	}
+ 	}
 
 	template<class T>
 	void HashTable<T>::Remove(const std::string& key) {
-		int hashCode = Hash(key);
+		int hashCode = Hash(key, m_capacity);
 		--m_size;
 		ResizeIfNeeded();
-		HashFlag flag = m_data[hashCode].GetFlag();
+		ADT::HashFlag flag = m_data[hashCode].GetFlag();
 		int count = 0;
-		while ((flag == HashFlag::DELETED || (flag == HashFlag::OCCUPPIED && m_data[hashCode].GetKey() != key))
+		while ((flag == ADT::HashFlag::DELETED || (flag == ADT::HashFlag::OCCUPPIED && m_data[hashCode].GetKey() != key))
 			&& (count <= m_capacity)) {
 			hashCode = (hashCode + 1) % m_capacity;
 			flag = m_data[hashCode].GetFlag();
 			++count;
 		}
 		if (m_data[hashCode].GetKey() == key) {
-			m_data[hashCode].SetFlag(HashFlag::DELETED);
+			m_data[hashCode].SetFlag(ADT::HashFlag::DELETED);
 		}
 		else {
-			throw std::out_of_range;
+			throw;
 		}
 	}
 
@@ -110,11 +112,15 @@ namespace ADT {
 			new_capacity = m_capacity * 2;
 		}
 		else if (m_size <= m_capacity * k_shrink_factor) {
-			new_capacity = m_capacity / 2;
+			new_capacity = m_capacity / 2 > k_default_capacity ? m_capacity / 2 : k_default_capacity;
 		}
 		else {
 			return;
 		}
+
+		new_capacity = GetNextPrime(new_capacity);
+		if (new_capacity == m_capacity)
+			return;
 
 		HashObject<T>* new_data = new HashObject<T>[new_capacity];
 		for (std::size_t i = 0; i < new_capacity; ++i) {
@@ -122,7 +128,18 @@ namespace ADT {
 		}
 
 		for (std::size_t i = 0; i < m_capacity; ++i) {
-
+			const std::string& key = m_data[i].GetKey();
+			int new_hash_code = Hash(key, new_capacity);
+			while (new_data[new_hash_code].GetFlag() == ADT::HashFlag::OCCUPPIED) {
+				new_hash_code = (new_hash_code + 1) % new_capacity;
+			}
+			new_data[new_hash_code].AddValue(key, m_data[i].GetValue());
 		}
+
+		delete[] m_data;
+		m_data = new_data;
+		m_capacity = new_capacity;
+		new_data = nullptr;
+		
 	}
 }

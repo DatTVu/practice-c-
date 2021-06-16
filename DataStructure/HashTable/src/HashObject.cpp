@@ -13,13 +13,14 @@ namespace ADT {
 	}
 
 	template <class T>
-	void HashObject<T>::AddValue(T val) {
+	void HashObject<T>::AddValue(const std::string& key, T val) {
+		m_key = key;
 		m_value = val;
 		m_flag = HashFlag::OCCUPPIED;
 	}
 
 	template <class T>
-	T HashObject<T>::Get() {
+	T HashObject<T>::GetValue() {
 		return m_value;
 	}
 

@@ -5,13 +5,17 @@
 #include "HashObject.h"
 
 namespace ADT {
+    constexpr std::size_t k_default_capacity = 13;
+    constexpr float k_growth_factor = 0.5;
+    constexpr float k_shrink_factor = 0.2;
+
     template <class T>
     class HashTable
     {
         //Function Members
     public:
         //Default constructor
-        explicit HashTable();
+        HashTable();
 
         //Default destructor
         ~HashTable();
@@ -32,7 +36,7 @@ namespace ADT {
         HashTable& operator= (HashTable<T>&& src) = delete;
 
         //Transform the key into array index
-        int Hash(const std::string& key);
+        int Hash(const std::string& key, std::size_t capacity);
 
         //Add a key to the hash table, if the key
         //already exists, update the value to the 
@@ -44,7 +48,7 @@ namespace ADT {
         bool IsExists(const std::string& key);
 
         //Return the value associated with the key
-        T Get(const std::string& key);
+        T GetValue(const std::string& key);
 
         //Delete a key and its associated value from the HashTable
         void Remove(const std::string& key);
@@ -53,9 +57,6 @@ namespace ADT {
     private:
         HashObject<T>* m_data{ new HashObject<T>[k_default_capacity] };
         //Default capacity should be an prime odd number to disperse the keys evenly among the array slots
-        constexpr std::size_t k_default_capacity = 13;
-        constexpr float k_growth_factor = 0.5;
-        constexpr float k_shrink_factor = 0.2;
         std::size_t m_capacity{ k_default_capacity };
         std::size_t m_size{ 0 };
 

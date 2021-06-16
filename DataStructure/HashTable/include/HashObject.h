@@ -15,16 +15,11 @@ namespace ADT {
 		HashObject() = default;
 		~HashObject() = default;
 		HashObject(const std::string& key, const T& value) : m_key(key), m_value(value) {}
-		//Copy and Move are not allowed
-		HashObject(const HashObject<T>& src) = delete;
-		HashObject(HashObject<T>&& src) = delete;
-		HashObject<T>& operator=(const HashObject<T>& src) = delete;
-		HashObject<T>&& operator=(HashObject<T>&& src) = delete;
 		//Method
 		HashFlag GetFlag();
 		void SetFlag(HashFlag flag);
-		void AddValue(T value);
-		T Get();
+		void AddValue(const std::string& key, T value);
+		T GetValue();
 		std::string GetKey();
 	private:
 		std::string m_key = "";
