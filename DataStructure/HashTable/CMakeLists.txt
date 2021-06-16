@@ -9,6 +9,7 @@ set(SOURCES
 	src/main.cpp
 	src/HashTable.cpp
 	src/HashObject.cpp
+	../utils/utils.cpp
 )
 
 add_executable(hash_table ${SOURCES})
@@ -16,4 +17,5 @@ add_executable(hash_table ${SOURCES})
 target_include_directories(hash_table
 	PRIVATE
 		${PROJECT_SOURCE_DIR}/include
+		${PROJECT_SOURCE_DIR}/../utils
 )

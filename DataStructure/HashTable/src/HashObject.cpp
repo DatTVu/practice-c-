@@ -3,13 +3,8 @@
 
 namespace ADT {
 	template <class T>
-	bool HashObject<T>::IsNull() {
-		if (m_flag == HashFlag::EMPTY) {
-			return true;
-		}
-		else {
-			return false;
-		}
+	HashFlag HashObject<T>::GetFlag() {
+		return m_flag;
 	}
 
 	template <class T>
@@ -18,7 +13,20 @@ namespace ADT {
 	}
 
 	template <class T>
-	T HashObject<T>::Get() {
+	void HashObject<T>::AddValue(const std::string& key, T val) {
+		m_key = key;
+		m_value = val;
+		m_flag = HashFlag::OCCUPPIED;
+	}
+
+	template <class T>
+	T HashObject<T>::GetValue() {
 		return m_value;
 	}
+
+	template <class T>
+	std::string HashObject<T>::GetKey() {
+		return m_key;
+	}
+	
 }
